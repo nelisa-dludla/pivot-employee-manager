@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+
+    color-scheme: light dark;
+    color: black;
+    background-color: #f2f0ef;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.pivot-green-text {
+    color: #8ed081;
+}
+
+.pivot-green-bg {
+    background-color: #8ed081;
+}
+.pivot-bg {
+    background-color: #f2f0ef;
+}
+
+nav {
+    height: 80px;
+}
+
+#home {
+    height: calc(100vh - 80px);
+}
+
+.hover-action {
+    transform: scale(1);
+    cursor: pointer;
+    transition: all 250ms ease-in-out;
+}
+
+.hover-action:hover {
+    transform: scale(1.1);
+}
