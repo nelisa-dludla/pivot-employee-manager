@@ -1,17 +1,42 @@
+{
+  /* Imports */
+}
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import Footer from "../components/Footer";
+
+const schema = z.object({
+  firstName: z.string().min(1, {
+    message: "First Name must contain at least 1 character(s)",
+  }),
+  lastName: z
+    .string()
+    .min(1, { message: "Last Name must contain at least 1 character(s)" }),
+  email: z.string().email(),
+  password: z.string().min(8),
+});
 
 function Register() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm();
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm({ resolver: zodResolver(schema) });
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      throw new Error();
+      console.log(data);
+    } catch (error) {
+      setError("root", {
+        message: "This email is already taken",
+      });
+    }
   };
 
   return (
@@ -37,28 +62,39 @@ function Register() {
         >
           {/* <div className="flex justify-between"> */}
           <div className="grid grid-cols-2 gap-4">
-            <input
-              {...register("first-name", { required: true })}
-              className="bg-white p-3 w-full mb-5 rounded-md"
-              type="text"
-              name="first-name"
-              id="first-name"
-              placeholder="First Name"
-            />
-            <input
-              {...register("last-name", { required: true })}
-              className="bg-white p-3 w-full mb-5 rounded-md"
-              type="text"
-              name="last-name"
-              id="last-name"
-              placeholder="Last Name"
-            />
+            <div>
+              <input
+                {...register("firstName")}
+                className="bg-white p-3 w-full mb-5 rounded-md"
+                type="text"
+                name="firstName"
+                id="firstName"
+                placeholder="First Name"
+              />
+              {errors.firstName && (
+                <div className="text-red-500 mb-5 ml-3">
+                  {errors.firstName.message}
+                </div>
+              )}
+            </div>
+            <div>
+              <input
+                {...register("lastName")}
+                className="bg-white p-3 w-full mb-5 rounded-md"
+                type="text"
+                name="lastName"
+                id="lastName"
+                placeholder="Last Name"
+              />
+              {errors.lastName && (
+                <div className="text-red-500 mb-5 ml-3">
+                  {errors.lastName.message}
+                </div>
+              )}
+            </div>
           </div>
           <input
-            {...register("email", {
-              required: "Email is required",
-              pattern: /^[a-zA-Z0–9._-]+@[a-zA-Z0–9.-]+\.[a-zA-Z]{2,4}$/,
-            })}
+            {...register("email")}
             className="block bg-white p-3 mb-5 w-full rounded-md"
             type="email"
             name="email"
@@ -66,13 +102,10 @@ function Register() {
             placeholder="Email"
           />
           {errors.email && (
-            <div className="text-red-500">{errors.email.message}</div>
+            <div className="text-red-500 mb-5 ml-3">{errors.email.message}</div>
           )}
           <input
-            {...register("password", {
-              required: "Password is required",
-              minLength: 8,
-            })}
+            {...register("password")}
             className="block bg-white p-3 mb-5 w-full rounded-md"
             type="password"
             name="password"
@@ -80,14 +113,20 @@ function Register() {
             placeholder="Enter your password"
           />
           {errors.password && (
-            <div className="text-red-500">{errors.password.message}</div>
+            <div className="text-red-500 mb-5 ml-3">
+              {errors.password.message}
+            </div>
           )}
           <button
             className="pivot-green-bg p-3 w-full font-semibold rounded-md"
             type="submit"
+            disabled={isSubmitting}
           >
-            Create Account
+            {isSubmitting ? "Loading..." : "Create Account"}
           </button>
+          {errors.root && (
+            <div className="text-red-500 my-5 ml-3">{errors.root.message}</div>
+          )}
         </form>
       </div>
       <Footer />
